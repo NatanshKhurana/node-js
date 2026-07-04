@@ -1,0 +1,28 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "backend revision",
+  "keywords": [
+    "backend",
+    "nodejs"
+  ],
+  "homepage": "https://github.com/Natansh14687/node-js#readme",
+  "bugs": {
+    "url": "https://github.com/Natansh14687/node-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Natansh14687/node-js.git"
+  },
+  "license": "ISC",
+  "author": "Natansh",
+  "type": "commonjs",
+  "scripts": {
+    "start" : "node src/app.js",
+    "dev" : "nodemon src/app.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
