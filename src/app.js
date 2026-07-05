@@ -2,18 +2,32 @@ const express = require("express");
 
 const app = express();
 
-app.use("/route", (req, res, next) => {
-  console.log("This is first route handler !!");
-  res.send("Response 1");
-  next();
-}, (req, res, next) => {
-  console.log("This is the Second route handler !!");
-  // res.send("Response 2");
-  next();
-}, (req, res, next) => {
-  console.log("This is the third route handler !!");
-  res.send("Response 3");
+// => middleware for authenticating admin route
+app.use("/admin", (req, res, next) => {
+  console.log("inside /admin auth middleware...");
+  const token = "xyz";
+  const isAdminAuthorised = token === "xyz";
+
+  if(!isAdminAuthorised){
+    res.status(401).send("Admin is not authorised !!");
+  }else{
+    next();
+  }
+});
+
+app.get("/user", (req, res, next)=>{
+  console.log("This is the response from user route");
+  res.send("Response from /user route !!");
 })
+
+
+app.get("/admin/getData", (req, res, next) => {
+  res.send("Getting the data from admin !");
+});
+
+app.delete("/admin/deleteData", (req, res, next)=>{
+  res.send("Deleting the data from the admin !");
+});
 
 
 
