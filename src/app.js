@@ -15,7 +15,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("User signed up successfully");
   } catch (err) {
-    res.status(500).send("Something went wrong while posting data to database");
+    res.status(500).send("Error posting : " + err);
   }
 });
 
@@ -65,12 +65,13 @@ app.patch("/user", async (req, res) => {
   const data = req.body;
   try{
     const user = await User.findByIdAndUpdate(userId, data, {
-      returnDocument : "after"
+      returnDocument : "after",
+      runValidators : true,
     });
     console.log(user);
     res.send("user updated successfully");
   }catch(err){
-    res.status(400).send("something went wrong");
+    res.status(400).send("something went wrong : " + err);
   }
 })
 
