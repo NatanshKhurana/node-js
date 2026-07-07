@@ -8,6 +8,7 @@ const { validateUserData } = require("./utils/validate");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const {userAuth} = require("./middlewares/auth");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -69,11 +70,11 @@ app.post("/login", async (req, res) => {
     const isCorrectPassword = await bcrypt.compare(password, user.password);
     if (isCorrectPassword) {
       // create a jwt token
-      const token = await jwt.sign({ _id: user._id }, "sEcReTkEy");
+      const token = await jwt.sign({ _id: user._id }, "sEcReTkEy", {expiresIn : "1m"});
 
       // add jwt token to cookie and send response back to the user...
 
-      res.cookie("token", token);
+      res.cookie("token", token, {expires : new Date(Date.now() + 60 * 1000)});
 
       res.send("Login Successfull !!!");
     } else {
@@ -84,25 +85,21 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const cookie = req.cookies;
-    // console.log(cookie);
-    // res.send("Cookie sent");
-
-    const { token } = cookie;
-    if (!token) {
-      throw new Error("logged out !! Please login again");
-    }
-    const decodedMsg = await jwt.verify(token, "sEcReTkEy");
-    // console.log(decodedMsg);
-
-    const { _id } = decodedMsg;
-
-    const user = await User.findById(_id);
+    const user = req.user;
     res.send(user);
   } catch (err) {
     res.status(404).send("Error : " + err);
+  }
+});
+
+app.post("/connectionRequest", userAuth, (req, res) => {
+  try{
+    const user = req.user;
+    res.send(`${user.firstName} sent a connection request`);
+  }catch(err){
+    res.status(400).send("Something went wrong");
   }
 });
 
