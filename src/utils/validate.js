@@ -1,4 +1,5 @@
 const validator = require("validator");
+const bcrypt = require("bcrypt");
 
 const validateUserData = (req) => {
   const { firstName, lastName, email, password } = req.body;
@@ -16,10 +17,29 @@ const validateProfileEdit = (req) => {
   const allowedUpdates = ["firstName", "lastName", "age", "photoUrl", "skills"];
 
   const isUpdateAllowed = Object.keys(req.body).every((key) =>
-    allowedUpdates.includes(key)
+    allowedUpdates.includes(key),
   );
 
   return isUpdateAllowed;
 };
 
-module.exports = { validateUserData, validateProfileEdit };
+const validateProfilePasswordFields = (req) => {
+  const allowedFields = ["oldPassword", "newPassword"];
+
+  const isAllowedFields = Object.keys(req.body).every((key) =>
+    allowedFields.includes(key),
+  );
+
+  return isAllowedFields;
+};
+
+const verifyProfilePassword = async (req) => {
+  const isPasswordVerified = await bcrypt.compare(
+    req.body.oldPassword,
+    req.user.password,
+  );
+
+  return isPasswordVerified;
+};
+
+module.exports = { validateUserData, validateProfileEdit, validateProfilePasswordFields, verifyProfilePassword };
