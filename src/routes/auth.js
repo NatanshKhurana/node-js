@@ -1,6 +1,6 @@
 const express = require("express");
 const authRouter = express.Router();
-const {validateUserData} = require("../utils/validate");
+const { validateUserData } = require("../utils/validate");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
@@ -60,16 +60,16 @@ authRouter.post("/login", async (req, res) => {
 
     const isCorrectPassword = await user.verifyPassword(password);
     console.log(isCorrectPassword);
-    
+
     if (isCorrectPassword) {
       // create a jwt token
       const token = await user.jwtToken();
-      console.log(token);
-      
+      //   console.log(token);
 
       // add jwt token to cookie and send response back to the user...
-
-      res.cookie("token", token, {expires : new Date(Date.now() + 60 * 1000)});
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 60 * 60 * 1000),
+      });
 
       res.send("Login Successfull !!!");
     } else {
@@ -78,6 +78,12 @@ authRouter.post("/login", async (req, res) => {
   } catch (err) {
     res.status(400).send("error : " + err);
   }
+});
+
+authRouter.post("/logout", (req, res) => {
+  res
+    .cookie("token", null, { expires: new Date(Date.now()) })
+    .send("User logged out successfully");
 });
 
 module.exports = authRouter;
