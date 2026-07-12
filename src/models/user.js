@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minLength: [8, `min length of password should be 8 characters`],
-      maxLength: [1000, `max length of password should be 1000 characters`],
+      maxLength: [1000, `max length of password can be 1000 characters`],
     },
     gender: {
       type: String,
@@ -64,6 +64,10 @@ const userSchema = new mongoose.Schema(
     skills: {
       type: [String],
     },
+    about : {
+      type : String,
+      maxLength : [1000, `max length of about can be 1000 characters`]
+    }
   },
   { timestamps: true },
 );
