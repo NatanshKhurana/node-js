@@ -11,10 +11,10 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     const receivedRequests = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
       status: "interested",
-    }).populate("fromUserId", "firstName lastName");
-    if (!receivedRequests.length) {
-      throw new Error("No requests for now !");
-    }
+    }).populate("fromUserId");
+    // if (!receivedRequests.length) {
+    //   throw new Error("No requests for now !");
+    // }
 
     res.json({ message: `requests retrived successfully`, receivedRequests });
   } catch (err) {
@@ -31,13 +31,11 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         { fromUserId: loggedInUser._id, status: "accepted" },
         { toUserId: loggedInUser._id, status: "accepted" },
       ],
-    })
-      .populate("fromUserId", "firstName lastName")
-      .populate("toUserId", "firstName lastName");
+    }).populate("fromUserId", "firstName lastName age gender about photoUrl").populate("toUserId", "firstName lastName age gender about photoUrl");
 
-    if (!userConnections.length) {
-      throw new Error("No Connections !!");
-    }
+    // if (!userConnections.length) {
+    //   throw new Error("No Connections !!");
+    // }
 
     const data = userConnections.map((field) => {
       if (field.fromUserId._id.toString() === loggedInUser._id.toString()) {
@@ -48,7 +46,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 
     res.send(data);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json("message : " + err.message);
   }
 });
 

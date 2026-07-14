@@ -42,8 +42,16 @@ authRouter.post("/signup", async (req, res) => {
     if (user?.skills.length > 10) {
       throw new Error("skills can't be more than 10");
     }
-    await user.save();
-    res.send("User signed up successfully");
+
+    const token = await user.jwtToken();
+    //   console.log(token);
+
+    // add jwt token to cookie and send response back to the user...
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 60 * 60 * 1000),
+    });
+    const data = await user.save();
+    res.json({ message: "User signed up successfully", data });
   } catch (err) {
     res.status(500).send("Error posting : " + err);
   }
